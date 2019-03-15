@@ -1,7 +1,8 @@
 from datetime import date, datetime, time
-from typing import Callable, Dict, Any, Tuple
+from typing import Callable, Dict, Any, Tuple, List
+from operator import lt, gt
 
-from utils import if_, create_validator, VALID
+from utils import if_, create_validator, VALID, append
 
 # --- INTEGER ---
 INT_ERROR_MSG = 'Value must be integer'
@@ -16,14 +17,9 @@ def validate_min_max(min_, max_, type_):
 
 
 def create_int_validator(min_: int = None, max_: int = None, nullable: bool = False) -> Callable[[int], str]:
-    # validate_min_max(min_, max_, int)
     validators = [lambda obj: if_(not isinstance(obj, int), INT_ERROR_MSG)]
-    if isinstance(min_, int):
-        min_value_msg = MIN_INT_ERROR_MSG % min_
-        validators.append(lambda obj: if_(obj < min_, min_value_msg))
-    if isinstance(max_, int):
-        max_value_msg = MAX_INT_ERROR_MSG % max_
-        validators.append(lambda obj: if_(obj > max_, max_value_msg))
+    validators = append_validator_if_setted(validators, isinstance(min_, int), create_limit_validator, lt, min_, MIN_INT_ERROR_MSG, min_)
+    validators = append_validator_if_setted(validators, isinstance(max_, int), create_limit_validator, gt, max_, MAX_INT_ERROR_MSG, max_)
     return create_validator(validators, nullable, int)
 
 
@@ -37,12 +33,8 @@ MAX_FLOAT_ERROR_MSG = 'Float must be smaller or equal to %d'
 def create_float_validator(min_: float = None, max_: float = None, nullable: bool = False) -> Callable[[float], str]:
     # validate_min_max(min_, max_, float)
     validators = [lambda obj: if_(not isinstance(obj, float), FLOAT_ERROR_MSG)]
-    if isinstance(min_, float):
-        min_value_msg = MIN_FLOAT_ERROR_MSG % min_
-        validators.append(lambda obj: if_(obj < min_, min_value_msg))
-    if isinstance(max_, float):
-        max_value_msg = MAX_FLOAT_ERROR_MSG % max_
-        validators.append(lambda obj: if_(obj > max_, max_value_msg))
+    validators = append_validator_if_setted(validators, isinstance(min_, float), create_limit_validator, lt, min_, MIN_FLOAT_ERROR_MSG, min_)
+    validators = append_validator_if_setted(validators, isinstance(max_, float), create_limit_validator, gt, max_, MAX_FLOAT_ERROR_MSG, max_)
     return create_validator(validators, nullable, float)
 
 
@@ -55,12 +47,8 @@ MAX_LEN_STR_ERROR_MSG = 'String\'s length must be shorter or equal to %d'
 
 def create_str_validator(min_len: int = None, max_len: int = None, nullable: bool = False) -> Callable[[str], str]:
     validators = [lambda obj: if_(not isinstance(obj, str), STR_ERROR_MSG)]
-    if isinstance(min_len, int):
-        min_len_msg = MIN_LEN_STR_ERROR_MSG % min_len
-        validators.append(lambda obj: if_(len(obj) < min_len, min_len_msg))
-    if isinstance(max_len, int):
-        max_len_msg = MAX_LEN_STR_ERROR_MSG % max_len
-        validators.append(lambda obj: if_(len(obj) > max_len, max_len_msg))
+    validators = append_validator_if_setted(validators, isinstance(min_len, int), create_len_limit_validator, lt, min_len, MIN_LEN_STR_ERROR_MSG, min_len)
+    validators = append_validator_if_setted(validators, isinstance(max_len, int), create_len_limit_validator, gt, max_len, MAX_LEN_STR_ERROR_MSG, max_len)
     return create_validator(validators, nullable)
 
 
@@ -77,12 +65,8 @@ def to_date(obj):
 
 def create_date_validator(min_: date = None, max_: date = None, nullable: bool = False) -> Callable[[date], str]:
     validators = [lambda obj: if_(not isinstance(obj, date), DATE_ERROR_MSG)]
-    if isinstance(min_, date):
-        min_msg = MIN_DATE_ERROR_MSG % min_
-        validators.append(lambda obj: if_(obj < min_, min_msg))
-    if isinstance(max_, date):
-        max_msg = MAX_DATE_ERROR_MSG % max_
-        validators.append(lambda obj: if_(obj > max_, max_msg))
+    validators = append_validator_if_setted(validators, isinstance(min_, date), create_limit_validator, lt, min_, MIN_DATE_ERROR_MSG, min_)
+    validators = append_validator_if_setted(validators, isinstance(max_, date), create_limit_validator, gt, max_, MAX_DATE_ERROR_MSG, max_)
     return create_validator(validators, nullable, to_date)
 
 
@@ -99,12 +83,8 @@ def to_datetime(obj):
 
 def create_datetime_validator(min_: datetime = None, max_: datetime = None, nullable: bool = False) -> Callable[[datetime], str]:
     validators = [lambda obj: if_(not isinstance(obj, datetime), DATETIME_ERROR_MSG)]
-    if isinstance(min_, datetime):
-        min_msg = MIN_DATETIME_ERROR_MSG % min_
-        validators.append(lambda obj: if_(obj < min_, min_msg))
-    if isinstance(max_, datetime):
-        max_msg = MAX_DATETIME_ERROR_MSG % max_
-        validators.append(lambda obj: if_(obj > max_, max_msg))
+    validators = append_validator_if_setted(validators, isinstance(min_, datetime), create_limit_validator, lt, min_, MIN_DATETIME_ERROR_MSG, min_)
+    validators = append_validator_if_setted(validators, isinstance(max_, datetime), create_limit_validator, gt, max_, MAX_DATETIME_ERROR_MSG, max_)
     return create_validator(validators, nullable, to_datetime)
 
 
@@ -121,12 +101,8 @@ def to_time(obj):
 
 def create_time_validator(min_: time = None, max_: time = None, nullable: bool = False) -> Callable[[time], str]:
     validators = [lambda obj: if_(not isinstance(obj, time), DATETIME_ERROR_MSG)]
-    if isinstance(min_, time):
-        min_msg = MIN_TIME_ERROR_MSG % min_
-        validators.append(lambda obj: if_(obj < min_, min_msg))
-    if isinstance(max_, time):
-        max_msg = MAX_TIME_ERROR_MSG % max_
-        validators.append(lambda obj: if_(obj > max_, max_msg))
+    validators = append_validator_if_setted(validators, isinstance(min_, time), create_limit_validator, lt, min_, MIN_TIME_ERROR_MSG, min_)
+    validators = append_validator_if_setted(validators, isinstance(max_, time), create_limit_validator, gt, max_, MAX_TIME_ERROR_MSG, max_)
     return create_validator(validators, nullable, to_time)
 
 
@@ -154,12 +130,8 @@ def create_list_validator(
         validate_element: Callable = False
 ) -> Callable[[list], str]:
     validators = [lambda obj: if_(not isinstance(obj, list), LIST_ERROR_MSG)]
-    if isinstance(min_len, int):
-        min_len_msg = MIN_LEN_LIST_ERROR_MSG % min_len
-        validators.append(lambda obj: if_(len(obj) < min_len, min_len_msg))
-    if isinstance(max_len, int):
-        max_len_msg = MAX_LEN_LIST_ERROR_MSG % max_len
-        validators.append(lambda obj: if_(len(obj) > max_len, max_len_msg))
+    validators = append_validator_if_setted(validators, isinstance(min_len, int), create_len_limit_validator, lt, min_len, MIN_LEN_LIST_ERROR_MSG, min_len)
+    validators = append_validator_if_setted(validators, isinstance(max_len, int), create_len_limit_validator, gt, max_len, MAX_LEN_LIST_ERROR_MSG, max_len)
 
     validate_list = create_validator(validators, nullable)
 
@@ -212,3 +184,15 @@ def filter_msgs(collection, validate_as, validate_element):
         if message != VALID:
             msgs.append(DICT_ELEMENT_ERROR_TEMPLATE % (key, message))
     return msgs if len(msgs) > 0 else VALID
+
+
+def append_validator_if_setted(validators: List[callable], is_setted: bool, create_validator: callable, compare: callable, limit, template: str,  value: str) -> List[callable]:
+    return append(validators, create_validator(compare, limit, template % value)) if is_setted else validators
+
+
+def create_limit_validator(compare: callable, limit,  msg: str) -> callable:
+    return lambda obj: msg if compare(obj, limit) else VALID
+
+
+def create_len_limit_validator(compare: callable, limit,  msg: str) -> callable:
+    return lambda obj: msg if compare(len(obj), limit) else VALID
