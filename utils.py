@@ -3,6 +3,10 @@ from typing import List, Callable, Any
 NULLABLE_ERROR_MSG = 'Not null allowed'
 VALID = 'Valid object'
 
+def append(list_: list, element) -> list:
+    copy = list(list_)
+    copy.append(element)
+    return copy
 
 def check_null(obj) -> str:
     return if_(obj is None, NULLABLE_ERROR_MSG)
