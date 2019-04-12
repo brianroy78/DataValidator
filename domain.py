@@ -27,3 +27,24 @@ DICT_TYPE = 'Dictionary'
 DATE_ISO_FORMAT = '%Y-%m-%d'
 DATETIME_ISO_FORMAT = '%Y-%m-%dT%H:%M:%S'
 TIME_ISO_FORMAT = '%H:%M:%S'
+
+STR_MIN_LEN_ERROR_MSG = 'String\'s length must be larger or equal to %s'
+STR_MAX_LEN_ERROR_MSG = 'String\'s length must be shorter or equal to %s'
+LIST_MIN_LEN_ERROR_MSG = 'String\'s length must be larger or equal to %s'
+LIST_MAX_LEN_ERROR_MSG = 'String\'s length must be shorter or equal to %s'
+
+INT_MIN_ERROR_MSG = 'Integer must be greater or equal to %s'
+INT_MAX_ERROR_MSG = 'Integer must be smaller or equal to %s'
+
+FLOAT_MIN_ERROR_MSG = 'Float must be greater or equal to %s'
+FLOAT_MAX_ERROR_MSG = 'Float must be smaller or equal to %s'
+
+DATE_MIN_ERROR_MSG = 'Date must be greater or equal to %s'
+DATE_MAX_ERROR_MSG = 'Date must be smaller or equal to %s'
+
+DATETIME_MIN_ERROR_MSG = 'Datetime must be greater or equal to %s'
+DATETIME_MAX_ERROR_MSG = 'Datetime must be smaller or equal to %s'
+
+TIME_MIN_ERROR_MSG = 'Time must be greater or equal to %s'
+TIME_MAX_ERROR_MSG = 'Time must be smaller or equal to %s'
+

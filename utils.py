@@ -3,10 +3,12 @@ from typing import List, Callable, Any
 NULLABLE_ERROR_MSG = 'Not null allowed'
 VALID = 'Valid object'
 
+
 def append(list_: list, element) -> list:
     copy = list(list_)
     copy.append(element)
     return copy
+
 
 def check_null(obj) -> str:
     return if_(obj is None, NULLABLE_ERROR_MSG)
@@ -45,6 +47,10 @@ def check_null_and_exec_validators(obj: Any, validators: List[Callable[[Any], st
         return exec_validators(transformed, validators)
     except:
         return exec_validators(obj, validators)
+
+
+def is_(obj, type_) -> str:
+    return if_(isinstance(obj, type_), )
 
 
 def create_validator(

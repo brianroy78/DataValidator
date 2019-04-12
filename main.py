@@ -149,8 +149,8 @@ def filter_msgs(collection, validate_as, validate_element):
     return msgs if len(msgs) > 0 else VALID
 
 
-def append_validator_if_set(validators: List[callable], is_set: bool, create_val: callable, compare: callable, limit, template: str, type_: str) -> List[callable]:
-    return append(validators, create_val(compare, limit, template % (type_, str(limit)))) if is_set else validators
+def append_validator_if_set(validators: List[callable], is_set: bool, create_val: callable, compare: callable, limit, template: str) -> List[callable]:
+    return append(validators, create_val(compare, limit, template % str(limit))) if is_set else validators
 
 
 def create_limit_validator(compare: callable, limit, msg: str) -> callable:
@@ -162,5 +162,5 @@ def create_len_limit_validator(compare: callable, limit, msg: str) -> callable:
 
 
 def apply_min_max_validator(validators: List[callable], min_max_type, min_, max_, create_val: callable, type_: str) -> List[callable]:
-    result = append_validator_if_set(validators, isinstance(min_, min_max_type), create_val, lt, min_, MIN_ERROR_MSG, type_)
-    return append_validator_if_set(result, isinstance(max_, min_max_type), create_val, gt, max_, MAX_ERROR_MSG, type_)
+    result = append_validator_if_set(validators, isinstance(min_, min_max_type), create_val, lt, min_, MIN_ERROR_MSG)
+    return append_validator_if_set(result, isinstance(max_, min_max_type), create_val, gt, max_, MAX_ERROR_MSG)
